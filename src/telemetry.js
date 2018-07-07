@@ -1,18 +1,26 @@
-import { collectTelemetryData } from './collectTelemetryData';
+import { getStreamInformation } from './getStreamInformation';
 import { sendTelemetryData } from './sendTelemetryData';
+
 
 (function () {
   amp.plugin('telemetry', function (options) {
-    const defaultInterval = 3000;
+    const defaultInterval = 30000;
     const player = this;
+    let collectedData = {};
 
     if (!options) {
       options = {};
     }
 
+    const flushCollectedData = function() {
+      collectedData = {};
+    }
+
     const collectAndSendTelemetryData = function() {
-      const data = collectTelemetryData(player, options);
-      sendTelemetryData(data);
+      collectedData.streamInformation = getStreamInformation(player);
+
+      sendTelemetryData(collectedData);
+      flushCollectedData();
     }
 
     const init = function () {

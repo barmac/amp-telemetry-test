@@ -1,6 +1,5 @@
-import { getStreamInformation } from './getStreamInformation';
 
-export function collectTelemetryData(player, options) {
+export function collectTelemetryData(player) {
   const telemetryData = {
     streamInformation: getStreamInformation(player),
   };
