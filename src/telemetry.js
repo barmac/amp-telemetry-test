@@ -3,7 +3,7 @@ import { sendTelemetryData } from './sendTelemetryData';
 
 (function () {
   amp.plugin('telemetry', function (options) {
-    const defaultInterval = 30000;
+    const defaultInterval = 3000;
     const player = this;
 
     if (!options) {

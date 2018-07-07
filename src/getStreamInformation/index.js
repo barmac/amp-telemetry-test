@@ -1,0 +1,1 @@
+export { getStreamInformation } from './getStreamInformation';
