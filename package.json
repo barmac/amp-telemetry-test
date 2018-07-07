@@ -1,0 +1,36 @@
+{
+  "name": "amp-telemetry-test",
+  "version": "0.1.0",
+  "description": "A simple plugin for Azure Media Player which collects information and telemetries.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --mode=production",
+    "start:dev": "webpack-dev-server --mode=development",
+    "build": "webpack --mode=production",
+    "build:dev": "webpack --mode=development",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maciejbarel/amp-telemetry-test.git"
+  },
+  "keywords": [
+    "azure",
+    "media",
+    "player",
+    "telemetry",
+    "plugin"
+  ],
+  "author": "Maciej Barelkowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maciejbarel/amp-telemetry-test/issues"
+  },
+  "homepage": "https://github.com/maciejbarel/amp-telemetry-test#readme",
+  "devDependencies": {
+    "html-webpack-plugin": "3.2.0",
+    "webpack": "4.15.1",
+    "webpack-cli": "3.0.8",
+    "webpack-dev-server": "3.1.4"
+  }
+}
