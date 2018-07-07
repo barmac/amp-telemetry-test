@@ -6,14 +6,21 @@ import { sendTelemetryData } from './sendTelemetryData';
   amp.plugin('telemetry', function (options) {
     const defaultInterval = 30000;
     const player = this;
-    let collectedData = {};
+    const collectedDataTemplate = {
+      streamInformation: {},
+      streamHistory: {},
+      playerStatistics: {},
+      playerEvents: [],
+      playerErrors: [],
+    };
+    let collectedData;
 
     if (!options) {
       options = {};
     }
 
     const flushCollectedData = function() {
-      collectedData = {};
+      collectedData = Object.assign({}, collectedDataTemplate);
     }
 
     const collectAndSendTelemetryData = function() {
