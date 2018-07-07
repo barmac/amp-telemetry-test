@@ -1,12 +1,24 @@
+import { collectTelemetryData } from './collectTelemetryData';
+import { sendTelemetryData } from './sendTelemetryData';
+
 (function () {
   amp.plugin('telemetry', function (options) {
-    var player = this
+    var defaultInterval = 30000;
+    var player = this;
 
-    var init = function () {
-        console.log("plugin telemetry initialized with player ", player)
+    if (!options) {
+      options = {};
     }
 
-    // initialize the plugin
+    var collectAndSendTelemetryData = function() {
+      var data = collectTelemetryData(player, options);
+      sendTelemetryData(data);
+    }
+
+    var init = function () {
+      setInterval(collectAndSendTelemetryData, options.interval || defaultInterval);
+    }
+
     init();
   });
 }).call(this);
