@@ -77,8 +77,6 @@ export class StreamHistoryRecorder {
     } else {
       failuresContainer[bitrate] = 1;
     }
-
-    console.log(this.failuresContainer, this.audioDownloadsCompleted, this.videoDownloadsCompleted);
   }
 
   reset() {
