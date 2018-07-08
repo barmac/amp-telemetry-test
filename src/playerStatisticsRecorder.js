@@ -3,6 +3,12 @@ class PlayerStatisticsRecorder {
     this.reset();
   }
 
+  getPlayerStatistics() {
+    return {
+      bufferingTime: this.getBufferingTime(),
+    };
+  }
+
   getBufferingTime() {
     if (this.bufferingStart) {
       this.saveBufferingTime();

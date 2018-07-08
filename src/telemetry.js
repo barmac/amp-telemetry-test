@@ -2,6 +2,7 @@ import { getPlayerError } from './getPlayerError';
 import { getStreamInformation } from './getStreamInformation';
 import { playerStatisticsRecorder } from './playerStatisticsRecorder';
 import { sendTelemetryData } from './sendTelemetryData';
+import { streamHistoryRecorder } from './streamHistoryRecorder';
 
 (function () {
   amp.plugin('telemetry', function (options) {
@@ -32,7 +33,8 @@ import { sendTelemetryData } from './sendTelemetryData';
 
     const collectAndSendTelemetryData = function() {
       collectedData.streamInformation = getStreamInformation(player);
-      collectedData.playerStatistics.bufferingTime = playerStatisticsRecorder.getBufferingTime();
+      collectedData.playerStatistics = playerStatisticsRecorder.getPlayerStatistics();
+      collectedData.streamHistory = streamHistoryRecorder.getStreamHistory();
 
       sendTelemetryData({ ...collectedData });
       flushCollectedData();
@@ -53,6 +55,8 @@ import { sendTelemetryData } from './sendTelemetryData';
 
       player.addEventListener('waiting', function() { playerStatisticsRecorder.startBuffering() });
       player.addEventListener('playing', function() { playerStatisticsRecorder.saveBufferingTime() });
+
+      player.addEventListener('playbackbitratechanged', function() { streamHistoryRecorder.recordBitrateChange() });
     }
 
     init();
