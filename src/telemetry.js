@@ -1,5 +1,5 @@
 import { getStreamInformation } from './getStreamInformation';
-import { sendTelemetryData } from './sendTelemetryData';
+import { TelemetryDataSender } from './telemetryDataSender';
 import { PlayerErrorsRecorder } from './playerErrorsRecorder';
 import { PlayerEventsRecorder } from './playerEventsRecorder';
 import { PlayerStatisticsRecorder } from './playerStatisticsRecorder';
@@ -7,7 +7,7 @@ import { StreamHistoryRecorder } from './streamHistoryRecorder';
 
 (function () {
   amp.plugin('telemetry', function (options) {
-    const defaultInterval = 3000;
+    const defaultInterval = 30000;
     const player = this;
     const collectedData = {};
     const playerEventsRecorder = new PlayerEventsRecorder(player);
@@ -18,6 +18,8 @@ import { StreamHistoryRecorder } from './streamHistoryRecorder';
     if (!options) {
       options = {};
     }
+
+    const telemetryDataSender = new TelemetryDataSender(options.url);
 
     const flushCollectedData = function() {
       collectedData.streamInformation = {};
@@ -34,7 +36,7 @@ import { StreamHistoryRecorder } from './streamHistoryRecorder';
       collectedData.streamHistory = streamHistoryRecorder.getStreamHistory();
       collectedData.streamInformation = getStreamInformation(player);
 
-      sendTelemetryData({ ...collectedData });
+      telemetryDataSender.sendData({ ...collectedData });
       flushCollectedData();
     }
 
