@@ -1,23 +1,18 @@
 import { getPlayerError } from './getPlayerError';
 import { getStreamInformation } from './getStreamInformation';
-import { playerStatisticsRecorder } from './playerStatisticsRecorder';
 import { sendTelemetryData } from './sendTelemetryData';
-import { streamHistoryRecorder } from './streamHistoryRecorder';
+import { PlayerEventsRecorder } from './playerEventsRecorder';
+import { PlayerStatisticsRecorder } from './playerStatisticsRecorder';
+import { StreamHistoryRecorder } from './streamHistoryRecorder';
 
 (function () {
   amp.plugin('telemetry', function (options) {
     const defaultInterval = 3000;
-    const playerEvents = [
-      'pause',
-      'skip',
-      'play',
-      'waiting',
-      'fullscreenchange',
-      'volumechange',
-      'ended',
-    ];
     const player = this;
     const collectedData = {};
+    const playerEventsRecorder = new PlayerEventsRecorder(player);
+    const playerStatisticsRecorder = new PlayerStatisticsRecorder(player);
+    const streamHistoryRecorder = new StreamHistoryRecorder(player);
 
     if (!options) {
       options = {};
@@ -32,9 +27,10 @@ import { streamHistoryRecorder } from './streamHistoryRecorder';
     }
 
     const collectAndSendTelemetryData = function() {
-      collectedData.streamInformation = getStreamInformation(player);
+      collectedData.playerEvents = playerEventsRecorder.getPlayerEvents();
       collectedData.playerStatistics = playerStatisticsRecorder.getPlayerStatistics();
       collectedData.streamHistory = streamHistoryRecorder.getStreamHistory();
+      collectedData.streamInformation = getStreamInformation(player);
 
       sendTelemetryData({ ...collectedData });
       flushCollectedData();
@@ -48,32 +44,12 @@ import { streamHistoryRecorder } from './streamHistoryRecorder';
         const error = getPlayerError(player);
         collectedData.playerErrors.push(error);
       });
-      playerEvents.forEach(event => player.addEventListener(event, function() {
-        const playerEvent = { event, timestamp: new Date() };
-        collectedData.playerEvents.push(playerEvent);
-      }));
 
-      player.addEventListener('waiting', function() { playerStatisticsRecorder.startBuffering() });
-      player.addEventListener('playing', function() { playerStatisticsRecorder.saveBufferingTime() });
-
-      player.addEventListener('playbackbitratechanged', function() { streamHistoryRecorder.recordBitrateChange() });
+      playerEventsRecorder.init();
+      playerStatisticsRecorder.init();
 
       player.addEventListener('loadedmetadata', function() {
-        const videoBufferData = player.videoBufferData();
-        videoBufferData.addEventListener('downloadcompleted', function () {
-          streamHistoryRecorder.recordVideoDownloadCompleted(videoBufferData.downloadCompleted);
-        });
-        videoBufferData.addEventListener('downloadfailed', function () {
-          streamHistoryRecorder.recordVideoDownloadFailed(videoBufferData.downloadFailed);
-        });
-
-        const audioBufferData = player.audioBufferData();
-        audioBufferData.addEventListener('downloadcompleted', function () {
-          streamHistoryRecorder.recordAudioDownloadCompleted(audioBufferData.downloadCompleted);
-        });
-        audioBufferData.addEventListener('downloadfailed', function () {
-          streamHistoryRecorder.recordAudioDownloadFailed(audioBufferData.downloadFailed);
-        });
+        streamHistoryRecorder.init();
       });
     }
 

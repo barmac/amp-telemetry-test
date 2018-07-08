@@ -1,6 +1,12 @@
-class PlayerStatisticsRecorder {
-  constructor() {
+export class PlayerStatisticsRecorder {
+  constructor(player) {
+    this.player = player;
     this.reset();
+  }
+
+  init() {
+    this.player.addEventListener('waiting', () => this.startBuffering());
+    this.layer.addEventListener('playing', () => this.saveBufferingTime());
   }
 
   getPlayerStatistics() {
@@ -44,5 +50,3 @@ class PlayerStatisticsRecorder {
     this.bufferingStart = undefined;
   }
 }
-
-export const playerStatisticsRecorder = new PlayerStatisticsRecorder();

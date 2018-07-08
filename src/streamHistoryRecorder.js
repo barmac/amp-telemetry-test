@@ -1,6 +1,19 @@
-class StreamHistoryRecorder {
-  constructor() {
+export class StreamHistoryRecorder {
+  constructor(player) {
+    this.player = player;
     this.reset();
+  }
+
+  init() {
+    this.player.addEventListener('playbackbitratechanged', () => this.recordBitrateChange() );
+
+    const videoBufferData = this.player.videoBufferData();
+    videoBufferData.addEventListener('downloadcompleted', () => this.recordVideoDownloadCompleted(videoBufferData.downloadCompleted));
+    videoBufferData.addEventListener('downloadfailed', () => this.recordVideoDownloadFailed(videoBufferData.downloadFailed));
+
+    const audioBufferData = this.player.audioBufferData();
+    audioBufferData.addEventListener('downloadcompleted', () => this.recordAudioDownloadCompleted(audioBufferData.downloadCompleted));
+    audioBufferData.addEventListener('downloadfailed', () => this.recordAudioDownloadFailed(audioBufferData.downloadFailed));
   }
 
   getStreamHistory() {
@@ -13,7 +26,7 @@ class StreamHistoryRecorder {
     };
 
     this.reset();
-    return streamHistory
+    return streamHistory;
   }
 
   recordBitrateChange() {
@@ -76,5 +89,3 @@ class StreamHistoryRecorder {
     this.videoDownloadsFailed = {};
   }
 }
-
-export const streamHistoryRecorder = new StreamHistoryRecorder();
