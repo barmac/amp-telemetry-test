@@ -1,5 +1,6 @@
 import { getPlayerError } from './getPlayerError';
 import { getStreamInformation } from './getStreamInformation';
+import { playerStatisticsRecorder } from './playerStatisticsRecorder';
 import { sendTelemetryData } from './sendTelemetryData';
 
 (function () {
@@ -31,6 +32,7 @@ import { sendTelemetryData } from './sendTelemetryData';
 
     const collectAndSendTelemetryData = function() {
       collectedData.streamInformation = getStreamInformation(player);
+      collectedData.playerStatistics.bufferingTime = playerStatisticsRecorder.getBufferingTime();
 
       sendTelemetryData({ ...collectedData });
       flushCollectedData();
@@ -39,14 +41,18 @@ import { sendTelemetryData } from './sendTelemetryData';
     const init = function () {
       flushCollectedData();
       setInterval(collectAndSendTelemetryData, options.interval || defaultInterval);
+
       player.addEventListener('error', function() {
         const error = getPlayerError(player);
         collectedData.playerErrors.push(error);
       });
-      playerEvents.forEach(event => player.addEventListener(event, () => {
+      playerEvents.forEach(event => player.addEventListener(event, function() {
         const playerEvent = { event, timestamp: new Date() };
         collectedData.playerEvents.push(playerEvent);
       }));
+
+      player.addEventListener('waiting', function() { playerStatisticsRecorder.startBuffering() });
+      player.addEventListener('playing', function() { playerStatisticsRecorder.saveBufferingTime() });
     }
 
     init();
