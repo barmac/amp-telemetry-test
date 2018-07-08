@@ -57,6 +57,24 @@ import { streamHistoryRecorder } from './streamHistoryRecorder';
       player.addEventListener('playing', function() { playerStatisticsRecorder.saveBufferingTime() });
 
       player.addEventListener('playbackbitratechanged', function() { streamHistoryRecorder.recordBitrateChange() });
+
+      player.addEventListener('loadedmetadata', function() {
+        const videoBufferData = player.videoBufferData();
+        videoBufferData.addEventListener('downloadcompleted', function () {
+          streamHistoryRecorder.recordVideoDownloadCompleted(videoBufferData.downloadCompleted);
+        });
+        videoBufferData.addEventListener('downloadfailed', function () {
+          streamHistoryRecorder.recordVideoDownloadFailed(videoBufferData.downloadFailed);
+        });
+
+        const audioBufferData = player.audioBufferData();
+        audioBufferData.addEventListener('downloadcompleted', function () {
+          streamHistoryRecorder.recordAudioDownloadCompleted(audioBufferData.downloadCompleted);
+        });
+        audioBufferData.addEventListener('downloadfailed', function () {
+          streamHistoryRecorder.recordAudioDownloadFailed(audioBufferData.downloadFailed);
+        });
+      });
     }
 
     init();
