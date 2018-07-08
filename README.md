@@ -13,3 +13,9 @@ Run `npm run build` to build the project. The build artifacts will be stored in 
 ## Start
 
 Install dependencies and run `npm start` to run the minified app inside webpack dev server.
+
+
+## Configuration
+
+Add url option to plugin to set a service to send the data to. Otherwise the telemetries will be logged to console.
+Add interval option to set custom interval (otherwise it is 30 s).
