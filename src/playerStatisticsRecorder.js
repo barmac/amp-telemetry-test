@@ -6,7 +6,7 @@ export class PlayerStatisticsRecorder {
 
   init() {
     this.player.addEventListener('waiting', () => this.startBuffering());
-    this.layer.addEventListener('playing', () => this.saveBufferingTime());
+    this.player.addEventListener('playing', () => this.saveBufferingTime());
   }
 
   getPlayerStatistics() {
