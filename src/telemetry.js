@@ -51,6 +51,8 @@ import { StreamHistoryRecorder } from './streamHistoryRecorder';
       player.addEventListener('loadedmetadata', function() {
         streamHistoryRecorder.init();
       });
+
+      window.addEventListener('onbeforeunload', () => collectAndSendTelemetryData(), false);
     }
 
     init();
