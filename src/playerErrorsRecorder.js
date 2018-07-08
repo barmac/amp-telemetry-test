@@ -18,7 +18,6 @@ export class PlayerErrorsRecorder {
   }
 
   recordPlayerError() {
-    this.getPlayerError()
     const { code } = this.player.error();
 
     this.playerErrors.push({
