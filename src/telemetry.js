@@ -1,6 +1,6 @@
-import { getPlayerError } from './getPlayerError';
 import { getStreamInformation } from './getStreamInformation';
 import { sendTelemetryData } from './sendTelemetryData';
+import { PlayerErrorsRecorder } from './playerErrorsRecorder';
 import { PlayerEventsRecorder } from './playerEventsRecorder';
 import { PlayerStatisticsRecorder } from './playerStatisticsRecorder';
 import { StreamHistoryRecorder } from './streamHistoryRecorder';
@@ -11,6 +11,7 @@ import { StreamHistoryRecorder } from './streamHistoryRecorder';
     const player = this;
     const collectedData = {};
     const playerEventsRecorder = new PlayerEventsRecorder(player);
+    const playerErrorsRecorder = new PlayerErrorsRecorder(player);
     const playerStatisticsRecorder = new PlayerStatisticsRecorder(player);
     const streamHistoryRecorder = new StreamHistoryRecorder(player);
 
@@ -27,6 +28,7 @@ import { StreamHistoryRecorder } from './streamHistoryRecorder';
     }
 
     const collectAndSendTelemetryData = function() {
+      collectedData.playerErrors = playerErrorsRecorder.getPlayerErrors();
       collectedData.playerEvents = playerEventsRecorder.getPlayerEvents();
       collectedData.playerStatistics = playerStatisticsRecorder.getPlayerStatistics();
       collectedData.streamHistory = streamHistoryRecorder.getStreamHistory();
@@ -40,11 +42,7 @@ import { StreamHistoryRecorder } from './streamHistoryRecorder';
       flushCollectedData();
       setInterval(collectAndSendTelemetryData, options.interval || defaultInterval);
 
-      player.addEventListener('error', function() {
-        const error = getPlayerError(player);
-        collectedData.playerErrors.push(error);
-      });
-
+      playerErrorsRecorder.init();
       playerEventsRecorder.init();
       playerStatisticsRecorder.init();
 
